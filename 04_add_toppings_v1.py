@@ -16,10 +16,10 @@ def yes_no(question):
 
 # main routine goes here
 while True:
-    want_instructions = yes_no("Do you want to read the menu? ")
+    want_toppings = yes_no("Would you like any toppings? ")
 
-    if want_instructions == "yes" or want_instructions == "y":
-        print("menu go here")
+    if want_toppings == "yes" or want_toppings == "y":
+        print("ask which topping here")
 
     print("program continues...")
     print()
