@@ -1,4 +1,9 @@
-import pandas as pd
+import pandas
+
+
+def menu():
+    print(cake_frame)
+
 
 
 data = {
@@ -6,7 +11,11 @@ data = {
              "carrot", "pistachio", "coffee", "raspberry", "coconut", "funfetti"],
     "price": [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
 }
-df = pd.DataFrame(data)
 
-print(df)
+
+cake_frame = pandas.DataFrame(data)
+cake_frame = cake_frame.set_index("cakes")
+
+
+menu()
 
