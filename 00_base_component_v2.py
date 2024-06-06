@@ -32,19 +32,40 @@ def yes_no(question):
             print("please enter yes or no")
 
 
-def cake_order():
+def not_blank(question):
+
+    while True:
+        response = input(question)
+
+        # if the response is blank, outputs error
+        if response == "":
+            print("Sorry this can't be blank. Please try again")
+        else:
+            return response
+
+
+def cake_order(question):
     while True:
 
-        cake_flavour = input("\nWhat flavour cake would you like? ").lower()
+        cake_flavour = input(question).lower()
 
         if cake_flavour in cake_list:
             print("You have chosen {}".format(cake_flavour))
+            cake_counter()
+            topping_counter.counter = 1
             break
         elif cake_flavour == "menu":
             menu()
             continue
+        elif cake_flavour == "xxx":
+            return cake_flavour
         else:
             print("Please choose an option from the menu\n")
+
+
+def cake_counter():
+    cake_counter.counter += 1
+    return cake_counter.counter
 
 
 def icing_order():
@@ -75,7 +96,7 @@ def which_toppings():
             continue
 
         elif response == "xxx":
-            break
+            return response
 
         elif response == "menu":
             menu()
@@ -87,6 +108,19 @@ def which_toppings():
 def topping_counter():
     topping_counter.counter += 1
     return topping_counter.counter
+
+
+def pickup_delivery():
+
+    while True:
+        response = input("Would you like pickup or delivery? ").lower()
+
+        if response == "pickup" or response == "delivery":
+            print("You have chosen {}".format(response))
+            return response
+
+        else:
+            print("Please choose either pickup or delivery")
 
 
 # main routine goes here
@@ -102,6 +136,7 @@ toppings_list = ["chocolates", "strawberries", "raspberries", "coconut",
                  "blueberries", "oranges", "lemons", "sprinkles", "lollies", "caramel"]
 topping_price = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+cake_counter.counter = 0
 topping_counter.counter = 1
 
 while True:
@@ -114,18 +149,28 @@ while True:
     elif want_instructions == "no" or want_instructions == "n":
         break
 
-cake_order()
+while cake_counter.counter < 3:
 
-icing_order()
+    which_flavour = cake_order("\nWhat flavour cake would you like? ")
+    if which_flavour == "xxx":
+        break
+    icing_order()
 
-while True:
     want_toppings = yes_no("Would you like any toppings? ")
 
     if want_toppings == "yes" or want_toppings == "y":
-        break
+        which_toppings()
 
     elif want_toppings == "no" or want_toppings == "n":
         print("You have chosen no toppings")
-        break
+        continue
 
-which_toppings()
+    elif want_toppings == "xxx":
+        continue
+
+while True:
+    name = not_blank("Please enter a name for the order: ")
+
+    pickup_delivery()
+    break
+

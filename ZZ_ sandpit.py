@@ -1,8 +1,7 @@
 import pandas as pd
 from tabulate import tabulate
 
-
-# functions go here
+# Functions go here
 def menu():
     cake = pd.DataFrame(list(zip(cake_list, cake_price)),
                         columns=['Cakes', 'Price'])
@@ -18,27 +17,23 @@ def menu():
 
 
 def yes_no(question):
-
     while True:
         response = input(question).lower()
-
-        if response == "yes" or response == "y":
+        if response in ["yes", "y"]:
             return "yes"
-
-        elif response == "no" or response == "n":
+        elif response in ["no", "n"]:
             return "no"
-
         else:
-            print("please enter yes or no")
+            print("Please enter yes or no")
 
 
 def cake_order():
     while True:
-
         cake_flavour = input("\nWhat flavour cake would you like? ").lower()
-
         if cake_flavour in cake_list:
             print("You have chosen {}".format(cake_flavour))
+            cake_counter()
+            topping_counter.counter = 1  # Reset topping counter here
             break
         elif cake_flavour == "menu":
             menu()
@@ -47,15 +42,17 @@ def cake_order():
             print("Please choose an option from the menu\n")
 
 
+def cake_counter():
+    cake_counter.counter += 1
+    return cake_counter.counter
+
+
 def icing_order():
     while True:
-
         icing_flavour = input("\nWhat flavour icing would you like? ").lower()
-
         if icing_flavour in icing_list:
             print("You have chosen {} icing".format(icing_flavour))
             break
-
         elif icing_flavour == "none":
             print("You have chosen no icing")
             break
@@ -67,19 +64,15 @@ def icing_order():
 
 
 def which_toppings():
-
     while topping_counter.counter <= 3:
         response = input("Topping {}: ".format(topping_counter.counter)).lower()
         if response in toppings_list:
             topping_counter()
             continue
-
         elif response == "xxx":
             break
-
         elif response == "menu":
             menu()
-
         else:
             print("Please choose an item from the menu or xxx for no more toppings\n")
 
@@ -89,7 +82,7 @@ def topping_counter():
     return topping_counter.counter
 
 
-# main routine goes here
+# Main routine goes here
 cake_list = ["chocolate", "strawberry", "vanilla", "lemon", "banana",
              "carrot", "pistachio", "coffee", "raspberry", "coconut", "funfetti"]
 cake_price = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
@@ -102,30 +95,25 @@ toppings_list = ["chocolates", "strawberries", "raspberries", "coconut",
                  "blueberries", "oranges", "lemons", "sprinkles", "lollies", "caramel"]
 topping_price = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+cake_counter.counter = 0
 topping_counter.counter = 1
 
 while True:
     want_instructions = yes_no("Do you want to read the menu? ")
-
-    if want_instructions == "yes" or want_instructions == "y":
+    if want_instructions in ["yes", "y"]:
         menu()
         break
-
-    elif want_instructions == "no" or want_instructions == "n":
+    elif want_instructions in ["no", "n"]:
         break
 
-cake_order()
-
-icing_order()
-
-while True:
-    want_toppings = yes_no("Would you like any toppings? ")
-
-    if want_toppings == "yes" or want_toppings == "y":
-        break
-
-    elif want_toppings == "no" or want_toppings == "n":
-        print("You have chosen no toppings")
-        break
-
-which_toppings()
+while cake_counter.counter <= 3:
+    cake_order()
+    icing_order()
+    while True:
+        want_toppings = yes_no("Would you like any toppings? ")
+        if want_toppings in ["yes", "y"]:
+            which_toppings()
+            break
+        elif want_toppings in ["no", "n"]:
+            print("You have chosen no toppings")
+            break
