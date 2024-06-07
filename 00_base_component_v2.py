@@ -110,10 +110,10 @@ def topping_counter():
     return topping_counter.counter
 
 
-def pickup_delivery():
+def pickup_delivery(question):
 
     while True:
-        response = input("Would you like pickup or delivery? ").lower()
+        response = input(question).lower()
 
         if response == "pickup" or response == "delivery":
             print("You have chosen {}".format(response))
@@ -121,6 +121,18 @@ def pickup_delivery():
 
         else:
             print("Please choose either pickup or delivery")
+
+
+def get_address():
+    while True:
+        address = input("Where would you like the order delivered? ")
+        number = any(map(str.isdigit, address))
+        string = any(map(str.isalpha, address))
+        if number == True and string == True:
+            print("Your order will be delivered to {}".format(address))
+            break
+        else:
+            print("please enter a valid address")
 
 
 # main routine goes here
@@ -171,6 +183,9 @@ while cake_counter.counter < 3:
 while True:
     name = not_blank("Please enter a name for the order: ")
 
-    pickup_delivery()
-    break
-
+    order_option = pickup_delivery("Would you like pickup or delivery? ")
+    if order_option == "pickup":
+        break
+    elif order_option == "delivery":
+        get_address()
+        break
