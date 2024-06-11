@@ -1,12 +1,14 @@
 def which_toppings():
 
-    while topping_counter.counter <= 3:
+    while topping_counter.counter <= 10:
         response = input("Topping {}: ".format(topping_counter.counter)).lower()
         if response in toppings_list:
             topping_counter()
+            print("You have chosen {}".format(response))
             continue
 
         elif response == "xxx":
+            print("You have chosen no further toppings")
             break
 
         elif response == "menu":

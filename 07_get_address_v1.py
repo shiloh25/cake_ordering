@@ -7,3 +7,6 @@ def get_address():
             print("program continues...")
         else:
             print("please enter a valid address")
+
+
+get_address()

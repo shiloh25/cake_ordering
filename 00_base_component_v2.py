@@ -28,8 +28,11 @@ def yes_no(question):
         elif response == "no" or response == "n":
             return "no"
 
+        elif response == "menu":
+            menu()
+
         else:
-            print("please enter yes or no")
+            print("Please enter yes or no")
 
 
 def not_blank(question):
@@ -60,7 +63,7 @@ def cake_order(question):
         elif cake_flavour == "xxx":
             return cake_flavour
         else:
-            print("Please choose an option from the menu\n")
+            print("Please choose an option from the menu")
 
 
 def cake_counter():
@@ -84,25 +87,27 @@ def icing_order():
             menu()
             continue
         else:
-            print("Please choose an option from the menu or none\n")
+            print("Please choose an option from the menu or none")
 
 
 def which_toppings():
 
     while topping_counter.counter <= 3:
-        response = input("Topping {}: ".format(topping_counter.counter)).lower()
+        response = input("\nTopping {}: ".format(topping_counter.counter)).lower()
         if response in toppings_list:
             topping_counter()
+            print("You have chosen {}".format(response))
             continue
 
         elif response == "xxx":
-            return response
+            print("You have chosen no further toppings")
+            break
 
         elif response == "menu":
             menu()
 
         else:
-            print("Please choose an item from the menu or xxx for no more toppings\n")
+            print("Please choose an item from the menu or xxx for no more toppings")
 
 
 def topping_counter():
@@ -125,28 +130,28 @@ def pickup_delivery(question):
 
 def get_address():
     while True:
-        address = input("Where would you like the order delivered? ")
+        address = input("\nWhere would you like the order delivered? ").lower()
         number = any(map(str.isdigit, address))
         string = any(map(str.isalpha, address))
         if number == True and string == True:
             print("Your order will be delivered to {}".format(address))
             break
         else:
-            print("please enter a valid address")
+            print("Please enter a valid address")
 
 
 # main routine goes here
 cake_list = ["chocolate", "strawberry", "vanilla", "lemon", "banana",
              "carrot", "pistachio", "coffee", "raspberry", "coconut", "funfetti"]
-cake_price = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+cake_price = [8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 6]
 
 icing_list = ["chocolate", "strawberry", "vanilla", "lemon", "coffee",
               "raspberry", "coconut", "caramel", "blueberry", "orange"]
-icing_price = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+icing_price = [2, 2, 2, 2, 3, 3, 3, 3, 3, 3]
 
 toppings_list = ["chocolates", "strawberries", "raspberries", "coconut",
                  "blueberries", "oranges", "lemons", "sprinkles", "lollies", "caramel"]
-topping_price = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+topping_price = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 
 cake_counter.counter = 0
 topping_counter.counter = 1
@@ -168,7 +173,7 @@ while cake_counter.counter < 3:
         break
     icing_order()
 
-    want_toppings = yes_no("Would you like any toppings? ")
+    want_toppings = yes_no("\nWould you like any toppings? ")
 
     if want_toppings == "yes" or want_toppings == "y":
         which_toppings()
@@ -181,9 +186,9 @@ while cake_counter.counter < 3:
         continue
 
 while True:
-    name = not_blank("Please enter a name for the order: ")
+    name = not_blank("\nPlease enter a name for the order: ")
 
-    order_option = pickup_delivery("Would you like pickup or delivery? ")
+    order_option = pickup_delivery("\nWould you like pickup or delivery? ")
     if order_option == "pickup":
         break
     elif order_option == "delivery":
