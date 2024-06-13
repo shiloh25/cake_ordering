@@ -208,6 +208,8 @@ while True:
         break
 
 total_price = calculate_total(order_list)
+if order_option == "delivery":
+    total_price += 5
 
 print("\nOrder Summary:")
 for idx, order in enumerate(order_list, start=1):
@@ -215,9 +217,13 @@ for idx, order in enumerate(order_list, start=1):
     print(f"  Cake: {order['cake'].capitalize()}")
     print(f"  Icing: {order['icing'].capitalize()}")
     if order['toppings']:
-        print(f"  Toppings: {', '.join(order['toppings'.capitalize()])}")
+        print(f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}")
+        print()
     else:
         print("  Toppings: None")
-    print()
+        print()
+if order_option == "delivery":
+    print("Delivery Fee: $5")
+print()
 
 print("Total Price: ${}".format(total_price))
