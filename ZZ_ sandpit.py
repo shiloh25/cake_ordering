@@ -1,7 +1,6 @@
 import pandas as pd
 from tabulate import tabulate
 
-
 # functions go here
 def menu():
     cake = pd.DataFrame(list(zip(cake_list, cake_price)),
@@ -56,7 +55,7 @@ def cake_order(question):
             print("You have chosen {}".format(cake_flavour))
             cake_counter()
             topping_counter.counter = 1
-            c_order.append(cake_flavour)
+            current_order["cake"] = cake_flavour
             break
         elif cake_flavour == "menu":
             menu()
@@ -79,11 +78,12 @@ def icing_order():
 
         if icing_flavour in icing_list:
             print("You have chosen {} icing".format(icing_flavour))
-            i_order.append(icing_flavour)
+            current_order["icing"] = icing_flavour
             break
 
         elif icing_flavour == "none":
             print("You have chosen no icing")
+            current_order["icing"] = "none"
             break
         elif icing_flavour == "menu":
             menu()
@@ -93,13 +93,13 @@ def icing_order():
 
 
 def which_toppings():
-
+    current_order["toppings"] = []
     while topping_counter.counter <= 3:
         response = input("\nTopping {}: ".format(topping_counter.counter)).lower()
         if response in toppings_list:
             topping_counter()
             print("You have chosen {}".format(response))
-            toppings_order.append(response)
+            current_order["toppings"].append(response)
             continue
 
         elif response == "xxx":
@@ -143,7 +143,31 @@ def get_address():
             print("Please enter a valid address")
 
 
-# main routine goes here
+def calculate_total(order_list):
+    cake_cost = sum([cake_price[cake_list.index(order["cake"])] for order in order_list])
+    icing_cost = sum([icing_price[icing_list.index(order["icing"])]
+                      for order in order_list if order["icing"] != "none"])
+    toppings_cost = sum([topping_price[toppings_list.index(topping)]
+                         for order in order_list for topping in order["toppings"]])
+    return cake_cost + icing_cost + toppings_cost
+
+
+def cash_credit(question):
+
+    while True:
+        response = input(question).lower()
+
+        if response == "cash" or response == "ca":
+            return "cash"
+
+        elif response == "credit" or response == "cr":
+            return "credit"
+
+        else:
+            print("Please choose a valid payment method\n")
+
+
+# Main routine goes here
 cake_list = ["chocolate", "strawberry", "vanilla", "lemon", "banana",
              "carrot", "pistachio", "coffee", "raspberry", "coconut", "funfetti"]
 cake_price = [8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 6]
@@ -159,10 +183,8 @@ topping_price = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 cake_counter.counter = 0
 topping_counter.counter = 1
 
-c_order = []
-i_order = []
-toppings_order = []
-total_price = 0
+order_list = []
+current_order = {}
 
 while True:
     want_instructions = yes_no("Do you want to read the menu? ")
@@ -175,7 +197,7 @@ while True:
         break
 
 while cake_counter.counter < 3:
-
+    current_order = {}
     which_flavour = cake_order("\nWhat flavour cake would you like? ")
     if which_flavour == "xxx":
         break
@@ -185,13 +207,10 @@ while cake_counter.counter < 3:
 
     if want_toppings == "yes" or want_toppings == "y":
         which_toppings()
+    else:
+        current_order["toppings"] = []
 
-    elif want_toppings == "no" or want_toppings == "n":
-        print("You have chosen no toppings")
-        continue
-
-    elif want_toppings == "xxx":
-        continue
+    order_list.append(current_order)
 
 while True:
     name = not_blank("\nPlease enter a name for the order: ")
@@ -203,7 +222,39 @@ while True:
         get_address()
         break
 
+total_price = calculate_total(order_list)
+if order_option == "delivery":
+    total_price += 5
 
-print(c_order)
-print(i_order)
-print(toppings_order)
+print("\nOrder Summary:")
+to_write = f"Order Summary for {name}\n"
+for idx, order in enumerate(order_list, start=1):
+    to_write += f"Order {idx}:\n"
+    to_write += f"  Cake: {order['cake'].capitalize()}\n"
+    to_write += f"  Icing: {order['icing'].capitalize()}\n"
+    if order['toppings']:
+        to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}\n"
+    else:
+        to_write += "  Toppings: None\n"
+    to_write += "\n"
+
+if order_option == "delivery":
+    to_write += "Delivery Fee: $5\n"
+
+to_write += f"\nTotal Price: ${total_price}\n"
+
+print(to_write)
+
+while True:
+    payment_method = cash_credit("How would you like to pay? (cash or credit) ")
+
+    if payment_method == "cash" or payment_method == "credit":
+        print("You chose {}".format(payment_method))
+        break
+
+# Write to file
+file_name = "order.txt"
+with open(file_name, "w") as text_file:
+    text_file.write(to_write)
+
+print("Order details have been written to", file_name)

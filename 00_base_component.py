@@ -2,6 +2,7 @@ import pandas as pd
 from tabulate import tabulate
 
 # functions go here
+# function that shows the menu
 def menu():
     cake = pd.DataFrame(list(zip(cake_list, cake_price)),
                         columns=['Cakes', 'Price'])
@@ -16,6 +17,7 @@ def menu():
     print(tabulate(topping, showindex=False, headers=topping.columns))
 
 
+# checks that an input is either yes or no
 def yes_no(question):
 
     while True:
@@ -34,6 +36,7 @@ def yes_no(question):
             print("Please enter yes or no")
 
 
+# checks that an input is not blank
 def not_blank(question):
 
     while True:
@@ -46,6 +49,7 @@ def not_blank(question):
             return response
 
 
+# cake ordering function
 def cake_order(question):
     while True:
 
@@ -66,11 +70,13 @@ def cake_order(question):
             print("Please choose an option from the menu")
 
 
+# function to count the number of cakes
 def cake_counter():
     cake_counter.counter += 1
     return cake_counter.counter
 
 
+# icing ordering function
 def icing_order():
     while True:
 
@@ -92,6 +98,7 @@ def icing_order():
             print("Please choose an option from the menu or none")
 
 
+# topping ordering counter
 def which_toppings():
     current_order["toppings"] = []
     while topping_counter.counter <= 3:
@@ -113,11 +120,13 @@ def which_toppings():
             print("Please choose an item from the menu or xxx for no more toppings")
 
 
+# function to count number of toppings
 def topping_counter():
     topping_counter.counter += 1
     return topping_counter.counter
 
 
+# function to check users answer is either pickup or delivery
 def pickup_delivery(question):
 
     while True:
@@ -131,6 +140,7 @@ def pickup_delivery(question):
             print("Please choose either pickup or delivery")
 
 
+# function to check that an input has both numbers and letters
 def get_address():
     while True:
         address = input("\nWhere would you like the order delivered? ").lower()
@@ -143,6 +153,7 @@ def get_address():
             print("Please enter a valid address")
 
 
+# function to calculate order cost
 def calculate_total(order_list):
     cake_cost = sum([cake_price[cake_list.index(order["cake"])] for order in order_list])
     icing_cost = sum([icing_price[icing_list.index(order["icing"])]
@@ -152,6 +163,7 @@ def calculate_total(order_list):
     return cake_cost + icing_cost + toppings_cost
 
 
+# function to check users input is either cash or credit
 def cash_credit(question):
 
     while True:
@@ -167,7 +179,8 @@ def cash_credit(question):
             print("Please choose a valid payment method\n")
 
 
-# main routine goes here
+# Main routine goes here
+# menu and price lists
 cake_list = ["chocolate", "strawberry", "vanilla", "lemon", "banana",
              "carrot", "pistachio", "coffee", "raspberry", "coconut", "funfetti"]
 cake_price = [8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 6]
@@ -180,12 +193,15 @@ toppings_list = ["chocolates", "strawberries", "raspberries", "coconut",
                  "blueberries", "oranges", "lemons", "sprinkles", "lollies", "caramel"]
 topping_price = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 
+# cake counter and topping counter
 cake_counter.counter = 0
 topping_counter.counter = 1
 
+# order list and dictionary
 order_list = []
 current_order = {}
 
+# first loop to ask user if they would like to read the menu
 while True:
     want_instructions = yes_no("Do you want to read the menu? ")
 
@@ -196,57 +212,82 @@ while True:
     elif want_instructions == "no" or want_instructions == "n":
         break
 
+# loop to get the users order, breaks after three cakes as that is the -
+# - maximum order
 while cake_counter.counter < 3:
     current_order = {}
+    # use cake ordering function to get cake
     which_flavour = cake_order("\nWhat flavour cake would you like? ")
     if which_flavour == "xxx":
         break
+    # use icing ordering function to get icing
     icing_order()
 
+    # use yes/no function to ask if user wants toppings
     want_toppings = yes_no("\nWould you like any toppings? ")
 
+    # use topping function if they want toppings
     if want_toppings == "yes" or want_toppings == "y":
         which_toppings()
     else:
         current_order["toppings"] = []
 
+    # send current order to order list
     order_list.append(current_order)
 
+# loop to get user information for the order
 while True:
+    # gets users name
     name = not_blank("\nPlease enter a name for the order: ")
 
+    # asks if user wants pickup or delivery
     order_option = pickup_delivery("\nWould you like pickup or delivery? ")
     if order_option == "pickup":
         break
     elif order_option == "delivery":
+        # use function to get the address
         get_address()
         break
 
+# calculates total price and adds delivery fee if chosen
 total_price = calculate_total(order_list)
 if order_option == "delivery":
     total_price += 5
 
+# prints order summary for the user and total price
 print("\nOrder Summary:")
+to_write = f"Order Summary for {name}\n"
 for idx, order in enumerate(order_list, start=1):
-    print(f"Order {idx}:")
-    print(f"  Cake: {order['cake'].capitalize()}")
-    print(f"  Icing: {order['icing'].capitalize()}")
+    # print each order and order number
+    to_write += f"Order {idx}:\n"
+    # writes cake and icing chosen
+    to_write += f"  Cake: {order['cake'].capitalize()}\n"
+    to_write += f"  Icing: {order['icing'].capitalize()}\n"
+    # check if toppings were picked, says none if they weren't
     if order['toppings']:
-        print(f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}")
-        print()
+        to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}\n"
     else:
-        print("  Toppings: None")
-        print()
+        to_write += "  Toppings: None\n"
+    to_write += "\n"
+
 if order_option == "delivery":
-    print("Delivery Fee: $5")
-print()
+    to_write += "Delivery Fee: $5\n"
 
-print("Total Price: ${}".format(total_price))
-print()
+# sends total price to to_write
+to_write += f"\nTotal Price: ${total_price}\n"
 
+print(to_write)
+
+# gets payment method using function
 while True:
     payment_method = cash_credit("How would you like to pay? (cash or credit) ")
 
     if payment_method == "cash" or payment_method == "credit":
-        print("You chose {}".format(payment_method))
         break
+
+# write to file
+file_name = "order.txt"
+with open(file_name, "w") as text_file:
+    text_file.write(to_write)
+
+print("\nThank you for ordering with us! Your order is being processed now.")
