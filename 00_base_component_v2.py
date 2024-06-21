@@ -214,98 +214,109 @@ topping_counter.counter = 1
 order_list = []
 current_order = {}
 
-# first loop to ask user if they would like to read the menu
-print("***** Welcome to the Cake Ordering Program! *****")
-print("At any time, you can answer 'menu' to view the menu")
 while True:
-    want_instructions = yes_no("\nDo you want to read the menu? ")
+    # first loop to ask user if they would like to read the menu
+    print("***** Welcome to the Cake Ordering Program! *****")
+    print("At any time, you can answer 'menu' to view the menu")
+    while True:
+        want_instructions = yes_no("\nDo you want to read the menu? ")
 
-    if want_instructions == "yes" or want_instructions == "y":
-        menu()
-        break
+        if want_instructions == "yes" or want_instructions == "y":
+            menu()
+            break
 
-    elif want_instructions == "no" or want_instructions == "n":
-        break
+        elif want_instructions == "no" or want_instructions == "n":
+            break
 
-# loop to get the users order, breaks after three cakes as that is the -
-# - maximum order
-while cake_counter.counter < 3:
-    current_order = {}
-    # use cake ordering function to get cake
-    which_flavour = cake_order("\nWhat flavour cake would you like? ")
-    if which_flavour == "xxx":
-        break
-    # use icing ordering function to get icing
-    icing_order()
+    # loop to get the users order, breaks after three cakes as that is the -
+    # - maximum order
+    while cake_counter.counter < 3:
+        current_order = {}
+        # use cake ordering function to get cake
+        which_flavour = cake_order("\nWhat flavour cake would you like? ")
+        if which_flavour == "xxx":
+            break
+        # use icing ordering function to get icing
+        icing_order()
 
-    # use yes/no function to ask if user wants toppings
-    want_toppings = yes_no("\nWould you like any toppings? ")
+        # use yes/no function to ask if user wants toppings
+        want_toppings = yes_no("\nWould you like any toppings? ")
 
-    # use topping function if they want toppings
-    if want_toppings == "yes" or want_toppings == "y":
-        which_toppings()
+        # use topping function if they want toppings
+        if want_toppings == "yes" or want_toppings == "y":
+            which_toppings()
+        else:
+            current_order["toppings"] = []
+
+        # send current order to order list
+        order_list.append(current_order)
+
+    # loop to get user information for the order
+    while True:
+        # gets users name
+        name = not_blank("\nPlease enter a name for the order: ")
+
+        # asks if user wants pickup or delivery
+        order_option = pickup_delivery("\nWould you like pickup or delivery? ")
+        if order_option == "pickup":
+            break
+        elif order_option == "delivery":
+            # use function to get the address
+            address = get_address()
+            phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
+            break
+
+    # calculates total price and adds delivery fee if chosen
+    total_price = calculate_total(order_list)
+    if order_option == "delivery":
+        total_price += 5
+
+    # prints order summary for the user and total price
+    to_write = f"\nOrder Summary for {name}\n"
+    for idx, order in enumerate(order_list, start=1):
+        # print each order and order number
+        to_write += f"Order {idx}:\n"
+        # writes cake and icing chosen
+        to_write += f"  Cake: {order['cake'].capitalize()}\n"
+        to_write += f"  Icing: {order['icing'].capitalize()}\n"
+        # check if toppings were picked, says none if they weren't
+        if order['toppings']:
+            to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}\n"
+        else:
+            to_write += "  Toppings: None\n"
+        to_write += "\n"
+
+    if order_option == "delivery":
+        to_write += "Delivery Fee: $5\n"
+        to_write += f"Being Delivered to {address}\nPhone Number: {phone_number}"
     else:
-        current_order["toppings"] = []
+        f"\n Order being picked up"
 
-    # send current order to order list
-    order_list.append(current_order)
+    # sends total price to to_write
+    to_write += f"\nTotal Price: ${total_price}\n"
 
-# loop to get user information for the order
-while True:
-    # gets users name
-    name = not_blank("\nPlease enter a name for the order: ")
+    print(to_write)
 
-    # asks if user wants pickup or delivery
-    order_option = pickup_delivery("\nWould you like pickup or delivery? ")
-    if order_option == "pickup":
+    cancel_confirm = input("Please confirm or cancel your order: ").lower()
+    if cancel_confirm == "cancel":
+        print("Your order has been cancelled")
         break
-    elif order_option == "delivery":
-        # use function to get the address
-        address = get_address()
-        phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
-        break
-
-# calculates total price and adds delivery fee if chosen
-total_price = calculate_total(order_list)
-if order_option == "delivery":
-    total_price += 5
-
-# prints order summary for the user and total price
-to_write = f"\nOrder Summary for {name}\n"
-for idx, order in enumerate(order_list, start=1):
-    # print each order and order number
-    to_write += f"Order {idx}:\n"
-    # writes cake and icing chosen
-    to_write += f"  Cake: {order['cake'].capitalize()}\n"
-    to_write += f"  Icing: {order['icing'].capitalize()}\n"
-    # check if toppings were picked, says none if they weren't
-    if order['toppings']:
-        to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}\n"
+    elif cancel_confirm == "confirm":
+        pass
     else:
-        to_write += "  Toppings: None\n"
-    to_write += "\n"
+        print("Please type either confirm or cancel")
 
-if order_option == "delivery":
-    to_write += "Delivery Fee: $5\n"
-    to_write += f"Being Delivered to {address}\nPhone Number: {phone_number}"
-else:
-    to_write += "\nOrder is being picked up"
+    # gets payment method using function
+    while True:
+        payment_method = cash_credit("\nHow would you like to pay? (cash or credit) ")
 
-# sends total price to to_write
-to_write += f"\nTotal Price: ${total_price}\n"
+        if payment_method == "cash" or payment_method == "credit":
+            break
 
-print(to_write)
+    # write to file
+    file_name = "order.txt"
+    with open(file_name, "w") as text_file:
+        text_file.write(to_write)
 
-# gets payment method using function
-while True:
-    payment_method = cash_credit("How would you like to pay? (cash or credit) ")
-
-    if payment_method == "cash" or payment_method == "credit":
-        break
-
-# write to file
-file_name = "order.txt"
-with open(file_name, "w") as text_file:
-    text_file.write(to_write)
-
-print("\nThank you for ordering with us! Your order is being processed now.")
+    print("\nThank you for ordering with us! Your order is being processed now.")
+    break
