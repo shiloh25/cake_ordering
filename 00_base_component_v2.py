@@ -148,7 +148,7 @@ def get_address():
         string = any(map(str.isalpha, address))
         if number is True and string is True:
             print("Your order will be delivered to {}".format(address))
-            break
+            return address
         else:
             print("Please enter a valid address")
 
@@ -261,7 +261,7 @@ while True:
         break
     elif order_option == "delivery":
         # use function to get the address
-        get_address()
+        address = get_address()
         phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
         break
 
@@ -272,11 +272,6 @@ if order_option == "delivery":
 
 # prints order summary for the user and total price
 to_write = f"\nOrder Summary for {name}\n"
-if order_option == "delivery":
-    f"\nBeing Delivered to {address}" \
-    f"Phone Number: {phone_number}"
-else:
-    f"\n Order being picked up"
 for idx, order in enumerate(order_list, start=1):
     # print each order and order number
     to_write += f"Order {idx}:\n"
@@ -292,6 +287,9 @@ for idx, order in enumerate(order_list, start=1):
 
 if order_option == "delivery":
     to_write += "Delivery Fee: $5\n"
+    to_write += f"Being Delivered to {address}\nPhone Number: {phone_number}"
+else:
+    to_write += "\nOrder is being picked up"
 
 # sends total price to to_write
 to_write += f"\nTotal Price: ${total_price}\n"
