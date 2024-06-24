@@ -287,10 +287,10 @@ while True:
         to_write += "\n"
 
     if order_option == "delivery":
-        to_write += "Delivery Fee: $5\n"
+        to_write += "\nDelivery Fee: $5\n"
         to_write += f"Being Delivered to {address}\nPhone Number: {phone_number}"
     else:
-        f"\n Order being picked up"
+        to_write += "\n Order is being picked up"
 
     # sends total price to to_write
     to_write += f"\nTotal Price: ${total_price}\n"
