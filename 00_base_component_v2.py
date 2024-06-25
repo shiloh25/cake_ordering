@@ -320,3 +320,5 @@ while True:
 
     print("\nThank you for ordering with us! Your order is being processed now.")
     break
+# need to find a way to make the program repeat so the user can place
+# another order without the file being overwritten

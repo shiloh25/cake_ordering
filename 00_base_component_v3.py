@@ -290,14 +290,15 @@ while True:
 
     print(to_write)
 
-    cancel_confirm = input("Please confirm or cancel your order: ").lower()
-    if cancel_confirm == "cancel":
-        print("Your order has been cancelled")
-        break
-    elif cancel_confirm == "confirm":
-        pass
-    else:
-        print("Please type either confirm or cancel")
+    while True:
+        cancel_confirm = input("Please confirm or cancel your order: ").lower()
+        if cancel_confirm == "cancel":
+            print("Your order has been cancelled")
+            exit()
+        elif cancel_confirm == "confirm":
+            break
+        else:
+            print("Please type either confirm or cancel")
 
     # gets payment method using function
     while True:
@@ -318,3 +319,4 @@ while True:
     else:
         print("\nThank you for ordering with us! Your order is being processed now.")
         break
+
