@@ -1,6 +1,7 @@
 import pandas as pd
 from tabulate import tabulate
 
+
 # functions go here
 # function that shows the menu
 def menu():
@@ -9,16 +10,16 @@ def menu():
     print(tabulate(cake, showindex=False, headers=cake.columns))
     print()
     icing = pd.DataFrame(list(zip(icing_list, icing_price)),
-                        columns=['Icing', 'Price'])
+                         columns=['Icing', 'Price'])
     print(tabulate(icing, showindex=False, headers=icing.columns))
     print()
     topping = pd.DataFrame(list(zip(toppings_list, topping_price)),
-                        columns=['Toppings', 'Price'])
+                           columns=['Toppings', 'Price'])
     print(tabulate(topping, showindex=False, headers=topping.columns))
+
 
 # checks that an input is either yes or no
 def yes_no(question):
-
     while True:
         response = input(question).lower()
 
@@ -34,9 +35,9 @@ def yes_no(question):
         else:
             print("Please enter yes or no")
 
+
 # checks that an input is not blank
 def not_blank(question):
-
     while True:
         response = input(question)
 
@@ -45,6 +46,7 @@ def not_blank(question):
             print("Sorry this can't be blank. Please try again")
         else:
             return response
+
 
 # cake ordering function
 def cake_order(question):
@@ -66,10 +68,12 @@ def cake_order(question):
         else:
             print("Please choose an option from the menu")
 
+
 # function to count the number of cakes
 def cake_counter():
     cake_counter.counter += 1
     return cake_counter.counter
+
 
 # icing ordering function
 def icing_order():
@@ -92,6 +96,7 @@ def icing_order():
         else:
             print("Please choose an option from the menu or none")
 
+
 # topping ordering counter
 def which_toppings():
     current_order["toppings"] = []
@@ -113,14 +118,15 @@ def which_toppings():
         else:
             print("Please choose an item from the menu or xxx for no more toppings")
 
+
 # function to count number of toppings
 def topping_counter():
     topping_counter.counter += 1
     return topping_counter.counter
 
+
 # function to check users answer is either pickup or delivery
 def pickup_delivery(question):
-
     while True:
         response = input(question).lower()
 
@@ -130,6 +136,7 @@ def pickup_delivery(question):
 
         else:
             print("Please choose either pickup or delivery")
+
 
 # function to check that an input has both numbers and letters
 def get_address():
@@ -143,6 +150,7 @@ def get_address():
         else:
             print("Please enter a valid address")
 
+
 # function to check that an input is only numbers
 def num_check(question, error):
     valid = False
@@ -155,18 +163,32 @@ def num_check(question, error):
         else:
             print(error)
 
-# function to calculate order cost
+
+# function to calculate order cost and return individual prices
 def calculate_total(order_list):
+    individual_prices = []
     cake_cost = sum([cake_price[cake_list.index(order["cake"])] for order in order_list])
     icing_cost = sum([icing_price[icing_list.index(order["icing"])]
                       for order in order_list if order["icing"] != "none"])
     toppings_cost = sum([topping_price[toppings_list.index(topping)]
                          for order in order_list for topping in order["toppings"]])
-    return cake_cost + icing_cost + toppings_cost
+
+    for order in order_list:
+        cake = cake_price[cake_list.index(order["cake"])]
+        icing = icing_price[icing_list.index(order["icing"])] if order["icing"] != "none" else 0
+        toppings = sum([topping_price[toppings_list.index(topping)] for topping in order["toppings"]])
+        individual_prices.append({
+            "cake": cake,
+            "icing": icing,
+            "toppings": toppings
+        })
+
+    total_cost = cake_cost + icing_cost + toppings_cost
+    return total_cost, individual_prices
+
 
 # function to check users input is either cash or credit
 def cash_credit(question):
-
     while True:
         response = input(question).lower()
 
@@ -178,6 +200,7 @@ def cash_credit(question):
 
         else:
             print("Please choose a valid payment method\n")
+
 
 # Main routine goes here
 # menu and price lists
@@ -204,7 +227,8 @@ name_list = []
 while True:
     cake_counter.counter = 0
     # first loop to ask user if they would like to read the menu
-    print("***** Welcome to the Cake Ordering Program! *****")
+    print("\n***** Welcome to the Cake Ordering Program! *****")
+    print("You can order up to 3 cakes per order with up to 3 toppings per cake")
     print("At any time, you can answer 'menu' to view the menu")
     while True:
         want_instructions = yes_no("\nDo you want to read the menu? ")
@@ -243,7 +267,7 @@ while True:
     while True:
         # gets users name
         while True:
-            name = not_blank("\nPlease enter a name for the order: ")
+            name = not_blank("\nPlease enter a name for the order: ").capitalize()
             if name in name_list:
                 print("Sorry, there is already an order under this name. Please try again.")
             else:
@@ -260,21 +284,21 @@ while True:
             break
 
     # calculates total price and adds delivery fee if chosen
-    total_price = calculate_total(order_list)
+    total_price, individual_prices = calculate_total(order_list)
     if order_option == "delivery":
         total_price += 5
 
     # prints order summary for the user and total price
     to_write = f"\nOrder Summary for {name}\n"
-    for idx, order in enumerate(order_list, start=1):
+    for idx, (order, prices) in enumerate(zip(order_list, individual_prices), start=1):
         # print each order and order number
         to_write += f"Order {idx}:\n"
         # writes cake and icing chosen
-        to_write += f"  Cake: {order['cake'].capitalize()}\n"
-        to_write += f"  Icing: {order['icing'].capitalize()}\n"
+        to_write += f"  Cake: {order['cake'].capitalize()} (${prices['cake']})\n"
+        to_write += f"  Icing: {order['icing'].capitalize()} (${prices['icing']})\n"
         # check if toppings were picked, says none if they weren't
         if order['toppings']:
-            to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}\n"
+            to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])} (${prices['toppings']})\n"
         else:
             to_write += "  Toppings: None\n"
         to_write += "\n"
@@ -283,21 +307,22 @@ while True:
         to_write += "\nDelivery Fee: $5\n"
         to_write += f"Being Delivered to {address}\nPhone Number: {phone_number}"
     else:
-        to_write += "\n Order is being picked up"
+        to_write += "\nOrder is being picked up, no extra charge"
 
     # sends total price to to_write
     to_write += f"\nTotal Price: ${total_price}\n"
 
     print(to_write)
 
-    cancel_confirm = input("Please confirm or cancel your order: ").lower()
-    if cancel_confirm == "cancel":
-        print("Your order has been cancelled")
-        break
-    elif cancel_confirm == "confirm":
-        pass
-    else:
-        print("Please type either confirm or cancel")
+    while True:
+        cancel_confirm = input("Please confirm or cancel your order: ").lower()
+        if cancel_confirm == "cancel":
+            print("Your order has been cancelled")
+            exit()
+        elif cancel_confirm == "confirm":
+            break
+        else:
+            print("Please type either confirm or cancel")
 
     # gets payment method using function
     while True:
