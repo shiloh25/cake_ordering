@@ -5,7 +5,7 @@ def num_check(question, error):
         response = input(question)
 
         if response.isdigit():
-            return response
+            print(response)
         else:
             print(error)
 

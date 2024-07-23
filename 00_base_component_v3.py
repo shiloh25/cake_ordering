@@ -1,19 +1,25 @@
 import pandas as pd
 from tabulate import tabulate
 
-
 # functions go here
 # function that shows the menu
+
+
 def menu():
-    cake = pd.DataFrame(list(zip(cake_list, cake_price)),
+    # Format the prices to include dollar signs
+    formatted_cake_price = [f'${price}' for price in cake_price]
+    formatted_icing_price = [f'${price}' for price in icing_price]
+    formatted_topping_price = [f'${price}' for price in topping_price]
+
+    cake = pd.DataFrame(list(zip(cake_list, formatted_cake_price)),
                         columns=['Cakes', 'Price'])
     print(tabulate(cake, showindex=False, headers=cake.columns))
     print()
-    icing = pd.DataFrame(list(zip(icing_list, icing_price)),
+    icing = pd.DataFrame(list(zip(icing_list, formatted_icing_price)),
                          columns=['Icing', 'Price'])
     print(tabulate(icing, showindex=False, headers=icing.columns))
     print()
-    topping = pd.DataFrame(list(zip(toppings_list, topping_price)),
+    topping = pd.DataFrame(list(zip(toppings_list, formatted_topping_price)),
                            columns=['Toppings', 'Price'])
     print(tabulate(topping, showindex=False, headers=topping.columns))
 
@@ -51,7 +57,6 @@ def not_blank(question):
 # cake ordering function
 def cake_order(question):
     while True:
-
         cake_flavour = input(question).capitalize()
 
         if cake_flavour in cake_list:
@@ -78,7 +83,6 @@ def cake_counter():
 # icing ordering function
 def icing_order():
     while True:
-
         icing_flavour = input("\nWhat flavour icing would you like? ").capitalize()
 
         if icing_flavour in icing_list:
@@ -155,7 +159,6 @@ def get_address():
 def num_check(question, error):
     valid = False
     while not valid:
-
         response = input(question)
 
         if response.isdigit():
@@ -298,7 +301,8 @@ while True:
         to_write += f"  Icing: {order['icing'].capitalize()} (${prices['icing']})\n"
         # check if toppings were picked, says none if they weren't
         if order['toppings']:
-            to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])} (${prices['toppings']})\n"
+            to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}" \
+                        f" (${prices['toppings']})\n"
         else:
             to_write += "  Toppings: None\n"
         to_write += "\n"

@@ -5,11 +5,9 @@ def pickup_delivery():
 
         if response == "pickup" or response == "delivery":
             print("You have chosen {}".format(response))
-            return response
 
         else:
             print("Please choose either pickup or delivery")
-
 
 
 pickup_delivery()
