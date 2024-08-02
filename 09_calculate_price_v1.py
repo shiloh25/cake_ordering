@@ -144,12 +144,22 @@ def get_address():
 
 
 def calculate_total(order_list):
+    individual_prices = []
     cake_cost = sum([cake_price[cake_list.index(order["cake"])] for order in order_list])
     icing_cost = sum([icing_price[icing_list.index(order["icing"])]
                       for order in order_list if order["icing"] != "none"])
     toppings_cost = sum([topping_price[toppings_list.index(topping)]
                          for order in order_list for topping in order["toppings"]])
-    return cake_cost + icing_cost + toppings_cost
+
+    for order in order_list:
+        cake = cake_price[cake_list.index(order["cake"])]
+        icing = icing_price[icing_list.index(order["icing"])] if order["icing"] != "none" else 0
+        toppings = sum([topping_price[toppings_list.index(topping)] for topping in order["toppings"]])
+        individual_prices.append({
+            "cake": cake,
+            "icing": icing,
+            "toppings": toppings
+        })
 
 
 # main routine goes here

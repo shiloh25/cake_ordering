@@ -1,9 +1,9 @@
 import pandas as pd
 from tabulate import tabulate
+import os
 
 # functions go here
 # function that shows the menu
-
 
 def menu():
     # Format the prices to include dollar signs
@@ -205,6 +205,21 @@ def cash_credit(question):
             print("Please choose a valid payment method\n")
 
 
+# Function to load names from file
+def load_names(filename):
+    if os.path.exists(filename):
+        with open(filename, "r") as file:
+            return [line.strip() for line in file.readlines()]
+    return []
+
+
+# Function to save names to file
+def save_names(filename, names):
+    with open(filename, "w") as file:
+        for name in names:
+            file.write(f"{name}\n")
+
+
 # Main routine goes here
 # menu and price lists
 cake_list = ["Chocolate", "Strawberry", "Vanilla", "Lemon", "Banana",
@@ -216,16 +231,18 @@ icing_list = ["Chocolate", "Strawberry", "Vanilla", "Lemon", "Coffee",
 icing_price = [2, 2, 2, 2, 3, 3, 3, 3, 3, 3]
 
 toppings_list = ["Chocolates", "Strawberries", "Raspberries", "Coconut",
-                 "Blueberries", "Oranges", "Lemons", "Sprinkles", "Lollies", "caramel"]
+                 "Blueberries", "Oranges", "Lemons", "Sprinkles", "Lollies", "Caramel"]
 topping_price = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+# Load name list from file
+name_list = load_names("name_list.txt")
 
 # cake counter and topping counter
 topping_counter.counter = 1
 
 # order list and dictionary
 order_list = []
-current_order = {}
-name_list = []
+current_order = []
 
 while True:
     cake_counter.counter = 0
@@ -345,5 +362,7 @@ while True:
         order_list = []  # Clear the order list for the new order
         continue
     else:
+        # Save the updated name list to the file
+        save_names("name_list.txt", name_list)
         print("\nThank you for ordering with us! Your order is being processed now.")
         break

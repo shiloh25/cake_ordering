@@ -10,6 +10,6 @@ def num_check(question, error):
             print(error)
 
 
-phone_number = num_check("What is your phone number? ", "Please enter a valid phone number")
+phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
 
 print(phone_number)
