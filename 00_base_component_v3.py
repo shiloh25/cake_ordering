@@ -2,6 +2,7 @@ import pandas as pd
 from tabulate import tabulate
 import os
 
+
 # functions go here
 # function that shows the menu
 
@@ -54,12 +55,20 @@ def not_blank(question):
             return response
 
 
+# function to count the number of cakes
+def cake_counter():
+    cake_counter.counter += 1
+    return cake_counter.counter
+
+
 # cake ordering function
 def cake_order(question):
     while True:
         cake_flavour = input(question).capitalize()
 
-        if cake_flavour in cake_list:
+        if cake_flavour == "Xxx" and cake_counter.counter == 0:
+            print("You need to order at least one cake.")
+        elif cake_flavour in cake_list:
             print("You have chosen {}".format(cake_flavour))
             cake_counter()
             topping_counter.counter = 1
@@ -72,12 +81,6 @@ def cake_order(question):
             return cake_flavour
         else:
             print("Please choose an option from the menu")
-
-
-# function to count the number of cakes
-def cake_counter():
-    cake_counter.counter += 1
-    return cake_counter.counter
 
 
 # icing ordering function
@@ -186,7 +189,7 @@ def calculate_total(order_list):
             "toppings": toppings
         })
 
-    total_cost = cake_cost + icing_cost + toppings_cost
+    total_cost = cake_cost + icing_cost
     return total_cost, individual_prices
 
 
@@ -266,8 +269,9 @@ while True:
         current_order = {}
         # use cake ordering function to get cake
         which_flavour = cake_order("\nWhat flavour cake would you like? ")
-        if which_flavour == "Xxx":
+        if which_flavour == "Xxx" and cake_counter.counter > 0:
             break
+
         # use icing ordering function to get icing
         icing_order()
 

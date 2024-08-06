@@ -1,8 +1,11 @@
 import pandas as pd
 from tabulate import tabulate
+import os
+
 
 # functions go here
 # function that shows the menu
+
 def menu():
     # Format the prices to include dollar signs
     formatted_cake_price = [f'${price}' for price in cake_price]
@@ -21,6 +24,7 @@ def menu():
                            columns=['Toppings', 'Price'])
     print(tabulate(topping, showindex=False, headers=topping.columns))
 
+
 # checks that an input is either yes or no
 def yes_no(question):
     while True:
@@ -38,6 +42,7 @@ def yes_no(question):
         else:
             print("Please enter yes or no")
 
+
 # checks that an input is not blank
 def not_blank(question):
     while True:
@@ -49,12 +54,21 @@ def not_blank(question):
         else:
             return response
 
+
+# function to count the number of cakes
+def cake_counter():
+    cake_counter.counter += 1
+    return cake_counter.counter
+
+
 # cake ordering function
 def cake_order(question):
     while True:
         cake_flavour = input(question).capitalize()
 
-        if cake_flavour in cake_list:
+        if cake_flavour == "Xxx" and cake_counter.counter == 0:
+            print("You need to order at least one cake.")
+        elif cake_flavour in cake_list:
             print("You have chosen {}".format(cake_flavour))
             cake_counter()
             topping_counter.counter = 1
@@ -68,10 +82,6 @@ def cake_order(question):
         else:
             print("Please choose an option from the menu")
 
-# function to count the number of cakes
-def cake_counter():
-    cake_counter.counter += 1
-    return cake_counter.counter
 
 # icing ordering function
 def icing_order():
@@ -92,6 +102,7 @@ def icing_order():
             continue
         else:
             print("Please choose an option from the menu or none")
+
 
 # topping ordering counter
 def which_toppings():
@@ -114,10 +125,12 @@ def which_toppings():
         else:
             print("Please choose an item from the menu or xxx for no more toppings")
 
+
 # function to count number of toppings
 def topping_counter():
     topping_counter.counter += 1
     return topping_counter.counter
+
 
 # function to check users answer is either pickup or delivery
 def pickup_delivery(question):
@@ -131,6 +144,7 @@ def pickup_delivery(question):
         else:
             print("Please choose either pickup or delivery")
 
+
 # function to check that an input has both numbers and letters
 def get_address():
     while True:
@@ -143,6 +157,7 @@ def get_address():
         else:
             print("Please enter a valid address")
 
+
 # function to check that an input is only numbers
 def num_check(question, error):
     valid = False
@@ -153,6 +168,7 @@ def num_check(question, error):
             return response
         else:
             print(error)
+
 
 # function to calculate order cost and return individual prices
 def calculate_total(order_list):
@@ -173,8 +189,9 @@ def calculate_total(order_list):
             "toppings": toppings
         })
 
-    total_cost = cake_cost + icing_cost + toppings_cost
+    total_cost = cake_cost + icing_cost
     return total_cost, individual_prices
+
 
 # function to check users input is either cash or credit
 def cash_credit(question):
@@ -190,6 +207,22 @@ def cash_credit(question):
         else:
             print("Please choose a valid payment method\n")
 
+
+# Function to load names from file
+def load_names(filename):
+    if os.path.exists(filename):
+        with open(filename, "r") as file:
+            return [line.strip() for line in file.readlines()]
+    return []
+
+
+# Function to save names to file
+def save_names(filename, names):
+    with open(filename, "w") as file:
+        for name in names:
+            file.write(f"{name}\n")
+
+
 # Main routine goes here
 # menu and price lists
 cake_list = ["Chocolate", "Strawberry", "Vanilla", "Lemon", "Banana",
@@ -201,16 +234,18 @@ icing_list = ["Chocolate", "Strawberry", "Vanilla", "Lemon", "Coffee",
 icing_price = [2, 2, 2, 2, 3, 3, 3, 3, 3, 3]
 
 toppings_list = ["Chocolates", "Strawberries", "Raspberries", "Coconut",
-                 "Blueberries", "Oranges", "Lemons", "Sprinkles", "Lollies", "caramel"]
+                 "Blueberries", "Oranges", "Lemons", "Sprinkles", "Lollies", "Caramel"]
 topping_price = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+# Load name list from file
+name_list = load_names("name_list.txt")
 
 # cake counter and topping counter
 topping_counter.counter = 1
 
 # order list and dictionary
 order_list = []
-current_order = {}
-name_list = []
+current_order = []
 
 while True:
     cake_counter.counter = 0
@@ -234,8 +269,9 @@ while True:
         current_order = {}
         # use cake ordering function to get cake
         which_flavour = cake_order("\nWhat flavour cake would you like? ")
-        if which_flavour == "Xxx":
+        if which_flavour == "Xxx" and cake_counter.counter > 0:
             break
+
         # use icing ordering function to get icing
         icing_order()
 
@@ -286,7 +322,8 @@ while True:
         to_write += f"  Icing: {order['icing'].capitalize()} (${prices['icing']})\n"
         # check if toppings were picked, says none if they weren't
         if order['toppings']:
-            to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])} (${prices['toppings']})\n"
+            to_write += f"  Toppings: {', '.join(topping.capitalize() for topping in order['toppings'])}" \
+                        f" (${prices['toppings']})\n"
         else:
             to_write += "  Toppings: None\n"
         to_write += "\n"
@@ -329,5 +366,7 @@ while True:
         order_list = []  # Clear the order list for the new order
         continue
     else:
+        # Save the updated name list to the file
+        save_names("name_list.txt", name_list)
         print("\nThank you for ordering with us! Your order is being processed now.")
         break
