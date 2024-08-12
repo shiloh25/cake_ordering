@@ -67,7 +67,7 @@ def cake_order(question):
         cake_flavour = input(question).capitalize()
 
         if cake_flavour == "Xxx" and cake_counter.counter == 0:
-            print("You need to order at least one cake.")
+            print("Sorry you need to order at least one cake, please try again")
         elif cake_flavour in cake_list:
             print("You have chosen {}".format(cake_flavour))
             cake_counter()
@@ -189,7 +189,7 @@ def calculate_total(order_list):
             "toppings": toppings
         })
 
-    total_cost = cake_cost + icing_cost
+    total_cost = cake_cost + icing_cost + toppings_cost
     return total_cost, individual_prices
 
 

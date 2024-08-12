@@ -25,7 +25,6 @@ def menu():
     print(tabulate(topping, showindex=False, headers=topping.columns))
 
 
-# checks that an input is either yes or no
 # Generalized function to check that an input is within a set of valid options
 def get_valid_input(question, valid_responses, error_message="Please enter a valid response"):
     while True:
@@ -188,7 +187,7 @@ def calculate_total(order_list):
             "toppings": toppings
         })
 
-    total_cost = cake_cost + icing_cost
+    total_cost = cake_cost + icing_cost + toppings_cost
     return total_cost, individual_prices
 
 
@@ -284,6 +283,7 @@ while True:
         # asks if user wants pickup or delivery
         order_option = pickup_delivery("\nWould you like pickup or delivery? ")
         if order_option == "pickup":
+            phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
             break
         elif order_option == "delivery":
             # use function to get the address
@@ -291,13 +291,23 @@ while True:
             phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
             break
 
+    # gets payment method using function
+    while True:
+        payment_method = cash_credit("\nHow would you like to pay? (cash or credit) ")
+
+        if payment_method == "cash" or payment_method == "credit":
+            break
+
     # calculates total price and adds delivery fee if chosen
     total_price, individual_prices = calculate_total(order_list)
     if order_option == "delivery":
         total_price += 5
+    # Apply a 15% surcharge if payment method is credit
+    if payment_method == "credit":
+        total_price *= 1.15
 
     # prints order summary for the user and total price
-    to_write = f"\nOrder Summary for {name}\n"
+    to_write = f"\n*** Order Summary for {name} ***\n"
     for idx, (order, prices) in enumerate(zip(order_list, individual_prices), start=1):
         # print each order and order number
         to_write += f"Order {idx}:\n"
@@ -313,13 +323,13 @@ while True:
         to_write += "\n"
 
     if order_option == "delivery":
-        to_write += "\nDelivery Fee: $5\n"
+        to_write += "\n*** Customer Information ***\nDelivery Fee: $5\n"
         to_write += f"Being Delivered to {address}\nPhone Number: {phone_number}"
     else:
-        to_write += "\nOrder is being picked up, no extra charge"
+        to_write += f"\n*** Customer Information ***\nPhone Number: {phone_number}\nOrder is being picked up, no extra charge"
 
     # sends total price to to_write
-    to_write += f"\nTotal Price: ${total_price}\n"
+    to_write += f"\nTotal Price: ${total_price:.2f}\n"
 
     print(to_write)
 
@@ -332,13 +342,6 @@ while True:
             break
         else:
             print("Please type either confirm or cancel")
-
-    # gets payment method using function
-    while True:
-        payment_method = cash_credit("\nHow would you like to pay? (cash or credit) ")
-
-        if payment_method == "cash" or payment_method == "credit":
-            break
 
     # write to file
     file_name = "{}'s Order.txt".format(name)
