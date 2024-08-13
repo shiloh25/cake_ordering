@@ -5,8 +5,8 @@ import os
 
 # functions go here
 # function that shows the menu
-
 def menu():
+    print("\n***** Menu *****")
     # Format the prices to include dollar signs
     formatted_cake_price = [f'${price}' for price in cake_price]
     formatted_icing_price = [f'${price}' for price in icing_price]
@@ -23,6 +23,7 @@ def menu():
     topping = pd.DataFrame(list(zip(toppings_list, formatted_topping_price)),
                            columns=['Toppings', 'Price'])
     print(tabulate(topping, showindex=False, headers=topping.columns))
+    print()
 
 
 # Generalized function to check that an input is within a set of valid options
@@ -31,28 +32,28 @@ def get_valid_input(question, valid_responses, error_message="Please enter a val
         response = input(question).lower()
         if response in valid_responses:
             return response
-        elif response == "menu":
-            menu()
         else:
             print(error_message)
 
 
-# Replacing yes_no, cash_credit, and confirm_cancel with get_valid_input
+# yes_no using get_valid_input to check the user answers yes or no
 def yes_no(question):
     return get_valid_input(question, ["yes", "y", "no", "n"], "Please enter yes or no")
 
 
+# cash_credit using get_valid_input to check the user answers cash or credit
 def cash_credit(question):
     return get_valid_input(question, ["cash", "ca", "credit", "cr"], "Please choose a valid payment method")
 
 
-def confirm_cancel(question):
-    return get_valid_input(question, ["confirm", "cancel"], "Please type either confirm or cancel")
-
-
-# function to check users answer is either pickup or delivery
+# pickup_delivery using get_valid_input to check the user answers pickup or delivery
 def pickup_delivery(question):
     return get_valid_input(question, ["pickup", "delivery"], "Please choose either pickup or delivery")
+
+
+# confirm_cancel using get_valid_input to check the user answer cancel or confirm
+def confirm_cancel(question):
+    return get_valid_input(question, ["confirm", "cancel"], "Please type either confirm or cancel")
 
 
 # checks that an input is not blank
@@ -79,7 +80,7 @@ def cake_order(question):
         cake_flavour = input(question).capitalize()
 
         if cake_flavour == "Xxx" and cake_counter.counter == 0:
-            print("You need to order at least one cake.")
+            print("You need to order at least one cake.\n")
         elif cake_flavour in cake_list:
             print("You have chosen {}".format(cake_flavour))
             cake_counter()
@@ -92,7 +93,7 @@ def cake_order(question):
         elif cake_flavour == "Xxx":
             return cake_flavour
         else:
-            print("Please choose an option from the menu")
+            print("Please choose an option from the menu\n")
 
 
 # icing ordering function
@@ -116,7 +117,7 @@ def icing_order():
             print("Please choose an option from the menu or none")
 
 
-# topping ordering counter
+# topping ordering function
 def which_toppings():
     current_order["toppings"] = []
     while topping_counter.counter <= 3:
@@ -157,7 +158,7 @@ def get_address():
             print("Please enter a valid address")
 
 
-# function to check that an input is only numbers
+# function to check that an input is only numbers, greater than 7 and less than 15
 def num_check(question, error):
     while True:
         response = input(question)
@@ -191,7 +192,7 @@ def calculate_total(order_list):
     return total_cost, individual_prices
 
 
-# Function to load names from file
+# function to load names from file
 def load_names(filename):
     if os.path.exists(filename):
         with open(filename, "r") as file:
@@ -199,14 +200,14 @@ def load_names(filename):
     return []
 
 
-# Function to save names to file
+# function to save names to file
 def save_names(filename, names):
     with open(filename, "w") as file:
         for name in names:
             file.write(f"{name}\n")
 
 
-# Main routine goes here
+# main routine goes here
 # menu and price lists
 cake_list = ["Chocolate", "Strawberry", "Vanilla", "Lemon", "Banana",
              "Carrot", "Pistachio", "Coffee", "Raspberry", "Coconut", "Funfetti"]
@@ -220,10 +221,10 @@ toppings_list = ["Chocolates", "Strawberries", "Raspberries", "Coconut",
                  "Blueberries", "Oranges", "Lemons", "Sprinkles", "Lollies", "Caramel"]
 topping_price = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 
-# Load name list from file
+# load name list from file
 name_list = load_names("name_list.txt")
 
-# cake counter and topping counter
+# topping counter
 topping_counter.counter = 1
 
 # order list and dictionary
@@ -250,12 +251,13 @@ while True:
     # - maximum order
     while cake_counter.counter < 3:
         current_order = {}
-        # use cake ordering function to get cake
-        which_flavour = cake_order("\nWhat flavour cake would you like? ")
+        # use cake ordering function to get cake flavour
+        print("\nCake Number {}".format(cake_counter.counter + 1))
+        which_flavour = cake_order("What flavour cake would you like? ")
         if which_flavour == "Xxx" and cake_counter.counter > 0:
             break
 
-        # use icing ordering function to get icing
+        # use icing ordering function to get icing flavour
         icing_order()
 
         # use yes/no function to ask if user wants toppings
@@ -275,6 +277,7 @@ while True:
         # gets users name
         while True:
             name = not_blank("\nPlease enter a name for the order: ").capitalize()
+            # tells the user if there is already an order under that name and asks them to try again
             if name in name_list:
                 print("Sorry, there is already an order under this name. Please try again.")
             else:
@@ -283,27 +286,28 @@ while True:
         # asks if user wants pickup or delivery
         order_option = pickup_delivery("\nWould you like pickup or delivery? ")
         if order_option == "pickup":
+            # gets user phone number
             phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
             break
         elif order_option == "delivery":
-            # use function to get the address
+            # use functions to get the address and phone number
             address = get_address()
             phone_number = num_check("\nWhat is your phone number? ", "Please enter a valid phone number")
             break
 
     # gets payment method using function
     while True:
-        payment_method = cash_credit("\nHow would you like to pay? (cash or credit) ")
+        payment_method = cash_credit("\nWould you like to pay with cash or credit (15% surcharge for credit) ")
 
-        if payment_method == "cash" or payment_method == "credit":
+        if payment_method == "cash" or payment_method == "credit" or payment_method == "ca" or payment_method == "cr":
             break
 
     # calculates total price and adds delivery fee if chosen
     total_price, individual_prices = calculate_total(order_list)
     if order_option == "delivery":
         total_price += 5
-    # Apply a 15% surcharge if payment method is credit
-    if payment_method == "credit":
+    # applies a 15% surcharge if credit is chosen
+    if payment_method == "credit" or payment_method == "cr":
         total_price *= 1.15
 
     # prints order summary for the user and total price
@@ -322,22 +326,29 @@ while True:
             to_write += "  Toppings: None\n"
         to_write += "\n"
 
+    # if the user chooses delivery, displays delivery information
     if order_option == "delivery":
         to_write += "\n*** Customer Information ***\nDelivery Fee: $5\n"
         to_write += f"Being Delivered to {address}\nPhone Number: {phone_number}"
+    # if the user chooses pickup, displays pickup information
     else:
-        to_write += f"\n*** Customer Information ***\nPhone Number: {phone_number}\nOrder is being picked up, no extra charge"
+        to_write += f"\n*** Customer Information ***\nPhone Number: {phone_number}\n" \
+                    f"Order is being picked up, no extra charge"
 
     # sends total price to to_write
     to_write += f"\nTotal Price: ${total_price:.2f}\n"
 
+    # prints order info here
     print(to_write)
 
+    # asks the user to confirm or cancel their order
     while True:
         cancel_confirm = input("Please confirm or cancel your order: ").lower()
+        # cancels order if user chooses cancel
         if cancel_confirm == "cancel":
             print("Your order has been cancelled")
             exit()
+        # continues if user chooses confirm
         elif cancel_confirm == "confirm":
             break
         else:
@@ -348,6 +359,7 @@ while True:
     with open(file_name, "w") as text_file:
         text_file.write(to_write)
 
+    # asks the user if they would like to place another order
     another_order = yes_no("\nWould you like to place another order? ")
     if another_order == "yes":
         order_list = []  # Clear the order list for the new order
